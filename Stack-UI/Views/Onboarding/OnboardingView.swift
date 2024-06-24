@@ -12,18 +12,23 @@ var totalViews = 2
 struct OnboardingView: View{
     var data: [OnboardingData] = onboardingData
     @State var currentView: Int = 0
+    @AppStorage("show_onboarding") var showOnboarding: Bool = true
     
     func updateCurrentView(viewNumber: Int) {
         currentView = viewNumber
     }
     
     var body: some View{
-        if currentView == 0 {
-            OnboardingScreen(data: data[0], currentView: currentView, updateCurrentView:updateCurrentView)
-        }else if currentView == 1 {
-            OnboardingScreen(data: data[1], currentView: currentView, updateCurrentView:updateCurrentView)
+        if showOnboarding {
+            if currentView == 0 {
+                OnboardingScreen(data: data[0], currentView: currentView, updateCurrentView:updateCurrentView)
+            }else if currentView == 1 {
+                OnboardingScreen(data: data[1], currentView: currentView, updateCurrentView:updateCurrentView)
+            }else{
+                OnboardingScreen(data: data[2], currentView: currentView,updateCurrentView:updateCurrentView)
+            }
         }else{
-            OnboardingScreen(data: data[2], currentView: currentView,updateCurrentView:updateCurrentView)
+            Text("Onboarding completed")
         }
         
     }
@@ -34,6 +39,8 @@ struct OnboardingScreen: View {
     var data: OnboardingData
     var currentView: Int
     var updateCurrentView: (Int) -> ()
+
+    @AppStorage("show_onboarding") var showOnboarding: Bool = true
     
     @State private var isAnimating: Bool = false
     
@@ -48,6 +55,7 @@ struct OnboardingScreen: View {
                     Button(
                         action: {
                             updateCurrentView(2)
+                            showOnboarding = false
                         },
                         label: {
                             Text("Skip")
@@ -92,6 +100,7 @@ struct OnboardingScreen: View {
                                     updateCurrentView(currentView+1)
                                 } else if currentView == 2 {
                                     updateCurrentView(0)
+                                    showOnboarding = false
                                 }
                             }
                         },
